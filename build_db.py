@@ -1,6 +1,7 @@
 """Reads objects.parquet and builds database.db using the schema from models.py."""
 
 import json
+import sys
 import uuid
 from datetime import datetime
 
@@ -11,6 +12,7 @@ from dsc10_transcripts.models import Assignment, Conversation, Message, MessageR
 
 
 def main():
+    db_name = sys.argv[1] if len(sys.argv) > 1 else "database.db"
     df = pd.read_parquet("objects.parquet")
 
     # Parse object_data JSON for each type
@@ -23,7 +25,7 @@ def main():
     students_data = {s["id"]: s for s in get_objects("Student")}
 
     # Build database
-    engine = create_engine("sqlite:///database.db")
+    engine = create_engine(f"sqlite:///{db_name}")
     SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)
 
@@ -97,7 +99,7 @@ def main():
         a_count = session.exec(select(func.count()).select_from(Assignment)).one()
         c_count = session.exec(select(func.count()).select_from(Conversation)).one()
         m_count = session.exec(select(func.count()).select_from(Message)).one()
-        print(f"Created database.db: {a_count} assignments, {c_count} conversations, {m_count} messages")
+        print(f"Created {db_name}: {a_count} assignments, {c_count} conversations, {m_count} messages")
 
 
 def _parse_dt(val: str | None) -> datetime | None:
