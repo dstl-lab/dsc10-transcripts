@@ -1,3 +1,4 @@
+dsc10-production_transcript.txt
 # Python-generated files
 __pycache__/
 *.py[oc]
@@ -8,3 +9,10 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Data
+*.parquet
+*.db
+
+# Secrets
+.env
